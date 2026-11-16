@@ -26,6 +26,8 @@ stages:
         displayName: 'Instalar, testar e empacotar'
         pool:
           name: Default
+        workspace:
+          clean: all   # agente self-hosted guarda arquivos entre execuções
         steps:
           - checkout: self
             clean: true
@@ -71,6 +73,8 @@ stages:
         displayName: 'Publicar no Web App'
         pool:
           name: Default
+        workspace:
+          clean: all   # agente self-hosted guarda arquivos entre execuções
         steps:
           - checkout: none
 
@@ -85,7 +89,7 @@ stages:
               azureSubscription: '$(azureSubscription)'
               appType: 'webAppLinux'
               appName: '$(webAppName)'
-              package: '$(Pipeline.Workspace)/app/*.zip'
+              package: '$(Pipeline.Workspace)/app/merenda-da-roca-$(Build.BuildId).zip'
               runtimeStack: 'PYTHON|3.12'
               startUpCommand: 'gunicorn --bind=0.0.0.0 --timeout 600 app:app'
               appSettings: '-SCM_DO_BUILD_DURING_DEPLOYMENT true -APP_VERSION 1.0.$(Build.BuildId)'
