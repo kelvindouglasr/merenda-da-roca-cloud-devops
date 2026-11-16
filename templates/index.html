@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block conteudo %}
+{% set b = r.brasil %}
+<section class="hero">
+  <small>Painel da Prefeitura · PNAE</small>
+  <h1>Do pequeno produtor direto para o prato da escola.</h1>
+  <p>A verba da merenda existe, mas o agricultor familiar fica de fora. A partir de 2026 a lei exige que
+     pelo menos <strong>45%</strong> da verba do PNAE seja usada em compras da agricultura familiar.
+     Veja quem já cumpre e quanto falta para cada município.</p>
+  <div class="caminho">Campo → Escola → Cidade</div>
+</section>
+
+<div class="cards">
+  <div class="card">
+    <div class="rotulo">Prefeituras analisadas ({{ r.ano_referencia }})</div>
+    <div class="valor">{{ "{:,}".format(b.entidades).replace(",", ".") }}</div>
+  </div>
+  <div class="card">
+    <div class="rotulo">Verba do PNAE repassada pelo FNDE</div>
+    <div class="valor">{{ b.valor_transferido | milhoes }}</div>
+  </div>
+  <div class="card">
+    <div class="rotulo">Comprado da agricultura familiar</div>
+    <div class="valor ok">{{ b.perc_af | pct }}</div>
+  </div>
+  <div class="card">
+    <div class="rotulo">Prefeituras abaixo da nova meta de 45%</div>
+    <div class="valor alerta">{{ b.perc_abaixo_45 | pct }}</div>
+  </div>
+</div>
+
+<h2>Como as prefeituras se distribuem em relação à meta ({{ r.ano_referencia }})</h2>
+<div class="painel">
+  {% set total = r.faixas.values() | sum %}
+  {% set cores = {"45% ou mais": "#3f7d3a", "30% a 45%": "#e8b03c", "Abaixo de 30%": "#b8432e", "0% (nao comprou)": "#5c2f19"} %}
+  {% set ordem = ["45% ou mais", "30% a 45%", "Abaixo de 30%", "0% (nao comprou)"] %}
+  <div class="faixas">
+    {% for f in ordem if f in r.faixas %}
+      <div style="width: {{ r.faixas[f] / total * 100 }}%; background: {{ cores[f] }}">{{ r.faixas[f] }}</div>
+    {% endfor %}
+  </div>
+  <div class="legenda">
+    {% for f in ordem if f in r.faixas %}
+      <span><i style="background: {{ cores[f] }}"></i>{{ f }}</span>
+    {% endfor %}
+  </div>
+</div>
+
+<h2>Evolução das compras da agricultura familiar no Brasil</h2>
+<div class="painel">
+  {% set escala = 0.6 %}
+  <div class="grafico-serie">
+    <div class="linha-meta" style="bottom: calc({{ meta_nova / escala * 100 }}% * 0.82 + 30px)"><span>meta 2026: 45%</span></div>
+    <div class="linha-meta antiga" style="bottom: calc({{ meta_antiga / escala * 100 }}% * 0.82 + 30px)"><span>meta até 2025: 30%</span></div>
+    {% for s in serie %}
+    <div class="coluna">
+      <div class="num">{{ (s.perc_af * 100) | round(0) | int }}%</div>
+      <div class="barra" style="height: {{ s.perc_af / escala * 82 }}%"></div>
+      <div class="ano">{{ s.ano }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<h2>Regiões: onde o produtor mais fica de fora</h2>
+<div class="painel">
+  <table>
+    <thead>
+      <tr><th>Região</th><th class="num">Prefeituras</th><th class="num">% comprado da AF</th><th class="num">Abaixo de 45%</th><th class="esconde-mobile">Situação</th></tr>
+    </thead>
+    <tbody>
+      {% for g in r.regioes %}
+      <tr>
+        <td><strong>{{ g.regiao }}</strong></td>
+        <td class="num">{{ g.entidades }}</td>
+        <td class="num">{{ g.perc_af | pct }}</td>
+        <td class="num">{{ g.perc_abaixo_45 | pct }}</td>
+        <td class="esconde-mobile">
+          {% if g.perc_af >= meta_nova %}<span class="etiqueta ok">Na meta</span>
+          {% elif g.perc_af >= meta_antiga %}<span class="etiqueta medio">Entre 30% e 45%</span>
+          {% else %}<span class="etiqueta baixo">Abaixo de 30%</span>{% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="destaque alerta">
+  <strong>Recorte do projeto: Nordeste.</strong>
+  {% for g in r.regioes if g.regiao == "Nordeste" %}
+    Em {{ r.ano_referencia }}, {{ g.perc_abaixo_45 | pct }} das prefeituras nordestinas ficariam abaixo da nova meta de 45%.
+  {% endfor %}
+  É ali que o piloto da Merenda da Roça começa.
+  <a href="{{ url_for('municipios', uf='PI') }}">Ver municípios do Piauí →</a>
+</div>
+{% endblock %}

@@ -1,0 +1,174 @@
+:root {
+  --terra: #8a4b2a;
+  --terra-escura: #5c2f19;
+  --folha: #3f7d3a;
+  --folha-clara: #e4efd9;
+  --milho: #e8b03c;
+  --palha: #fbf6ec;
+  --tinta: #2b2118;
+  --cinza: #6f6458;
+  --linha: #e6dccb;
+  --alerta: #b8432e;
+  --branco: #ffffff;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+  background: var(--palha);
+  color: var(--tinta);
+  line-height: 1.5;
+}
+
+a { color: var(--folha); }
+
+.topo {
+  background: var(--terra-escura);
+  color: var(--palha);
+}
+.topo .barra {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--palha);
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 1.25rem;
+  letter-spacing: .02em;
+}
+.marca span.selo {
+  background: var(--milho);
+  color: var(--terra-escura);
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 1.1rem;
+}
+.topo nav a {
+  color: var(--palha);
+  text-decoration: none;
+  margin-left: 18px;
+  font-weight: 600;
+  opacity: .85;
+}
+.topo nav a:hover, .topo nav a.ativo { opacity: 1; border-bottom: 2px solid var(--milho); }
+
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+
+.hero {
+  background: linear-gradient(135deg, var(--folha) 0%, #2d5e2a 100%);
+  color: var(--palha);
+  border-radius: 18px;
+  padding: 36px 32px;
+  margin-bottom: 28px;
+}
+.hero small { text-transform: uppercase; letter-spacing: .12em; color: var(--milho); font-weight: 700; }
+.hero h1 { font-size: 2.3rem; margin: 6px 0 8px; line-height: 1.15; }
+.hero p { max-width: 640px; margin: 0; font-size: 1.08rem; opacity: .95; }
+.caminho { margin-top: 18px; font-weight: 700; color: var(--milho); }
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.card {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+  padding: 18px 20px;
+}
+.card .rotulo { color: var(--cinza); font-size: .9rem; }
+.card .valor { font-size: 1.9rem; font-weight: 800; color: var(--terra-escura); }
+.card .valor.alerta { color: var(--alerta); }
+.card .valor.ok { color: var(--folha); }
+
+h2 { color: var(--terra-escura); margin: 32px 0 12px; }
+
+.painel {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: 14px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.grafico-serie { display: flex; align-items: flex-end; gap: 10px; height: 220px; padding-top: 24px; position: relative; }
+.grafico-serie .coluna { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; min-width: 34px; }
+.grafico-serie .barra { width: 100%; background: var(--folha); border-radius: 6px 6px 0 0; }
+.grafico-serie .num { font-size: .78rem; font-weight: 700; margin-bottom: 4px; }
+.grafico-serie .ano { font-size: .78rem; color: var(--cinza); margin-top: 6px; }
+.linha-meta { position: absolute; left: 0; right: 0; border-top: 2px dashed var(--alerta); }
+.linha-meta span { position: absolute; right: 0; top: -20px; font-size: .75rem; color: var(--alerta); font-weight: 700; background: var(--branco); padding: 0 4px; }
+.linha-meta.antiga { border-color: var(--milho); }
+.linha-meta.antiga span { color: #9a6d0c; }
+
+.faixas { display: flex; height: 34px; border-radius: 8px; overflow: hidden; margin: 8px 0 12px; }
+.faixas div { display: grid; place-items: center; color: var(--branco); font-size: .8rem; font-weight: 700; }
+.legenda { display: flex; flex-wrap: wrap; gap: 14px; font-size: .88rem; color: var(--cinza); }
+.legenda i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--linha); }
+th { color: var(--cinza); font-weight: 700; font-size: .82rem; text-transform: uppercase; letter-spacing: .04em; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.medidor { background: var(--linha); border-radius: 99px; height: 10px; position: relative; min-width: 90px; }
+.medidor .preench { background: var(--folha); height: 100%; border-radius: 99px; }
+.medidor .preench.baixo { background: var(--alerta); }
+.medidor .preench.medio { background: var(--milho); }
+.medidor .marca45 { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--tinta); left: 45%; }
+
+.etiqueta { display: inline-block; padding: 2px 10px; border-radius: 99px; font-size: .8rem; font-weight: 700; white-space: nowrap; }
+.etiqueta.ok { background: var(--folha-clara); color: var(--folha); }
+.etiqueta.medio { background: #fbefd2; color: #8a5f05; }
+.etiqueta.baixo { background: #f6ddd6; color: var(--alerta); }
+
+form.filtros { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 16px; }
+form.filtros input, form.filtros select, form.filtros button {
+  font: inherit; padding: 9px 12px; border: 1px solid var(--linha); border-radius: 10px; background: var(--branco);
+}
+form.filtros input { flex: 1; min-width: 200px; }
+form.filtros button { background: var(--folha); color: var(--branco); border-color: var(--folha); font-weight: 700; cursor: pointer; }
+
+.destaque {
+  background: var(--folha-clara);
+  border-left: 5px solid var(--folha);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin: 18px 0;
+}
+.destaque.alerta { background: #f6ddd6; border-color: var(--alerta); }
+
+.equipe { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+
+rodape, footer {
+  display: block;
+  text-align: center;
+  color: var(--cinza);
+  font-size: .85rem;
+  padding: 24px 16px 32px;
+  border-top: 1px solid var(--linha);
+}
+
+@media (max-width: 640px) {
+  .hero { padding: 26px 20px; }
+  .hero h1 { font-size: 1.7rem; }
+  .topo nav a { margin-left: 0; margin-right: 14px; }
+  .esconde-mobile { display: none; }
+}

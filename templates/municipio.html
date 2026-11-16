@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block titulo %}{{ m.municipio }} ({{ m.uf }}) · Merenda da Roça{% endblock %}
+{% block conteudo %}
+<p><a href="{{ url_for('municipios', uf=m.uf) }}">← Municípios de {{ m.uf }}</a></p>
+<section class="hero">
+  <small>{{ m.regiao }} · {{ m.uf }}{% if m.populacao %} · {{ "{:,}".format(m.populacao).replace(",", ".") }} habitantes{% endif %}</small>
+  <h1>{{ m.municipio }}</h1>
+  <p>Situação: <strong>{{ m.faixa }}</strong></p>
+</section>
+
+<div class="cards">
+  <div class="card"><div class="rotulo">Verba do PNAE recebida</div><div class="valor">{{ m.transferido | reais }}</div></div>
+  <div class="card"><div class="rotulo">Comprado da agricultura familiar</div><div class="valor">{{ m.aquisicao_af | reais }}</div></div>
+  <div class="card"><div class="rotulo">Percentual</div><div class="valor {{ 'ok' if m.perc_af >= meta_nova else 'alerta' }}">{{ m.perc_af | pct }}</div></div>
+</div>
+
+<div class="painel">
+  <div class="rotulo" style="margin-bottom: 8px">Progresso até a meta de 45%</div>
+  {% set nivel = 'ok' if m.perc_af >= meta_nova else ('medio' if m.perc_af >= meta_antiga else 'baixo') %}
+  <div class="medidor" style="height: 18px"><div class="preench {{ nivel }}" style="width: {{ [m.perc_af, 1] | min * 100 }}%"></div><div class="marca45"></div></div>
+</div>
+
+{% if falta > 0 %}
+<div class="destaque alerta">
+  Para cumprir a meta de 45%, {{ m.municipio }} precisaria comprar mais <strong>{{ falta | reais }}</strong>
+  de agricultores familiares{% if falta30 > 0 %} (e {{ falta30 | reais }} só para alcançar a meta antiga de 30%){% endif %}.
+  A Merenda da Roça avisa os produtores da região por áudio no WhatsApp e soma a oferta de vizinhos para fechar esse volume.
+</div>
+{% else %}
+<div class="destaque">
+  {{ m.municipio }} já cumpre a meta de 45%. A Merenda da Roça ajuda a manter o produtor local abastecendo as escolas.
+</div>
+{% endif %}
+{% endblock %}

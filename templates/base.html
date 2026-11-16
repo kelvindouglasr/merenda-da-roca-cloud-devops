@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Merenda da Roça{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <div class="barra">
+      <a class="marca" href="{{ url_for('inicio') }}"><span class="selo">🌽</span> Merenda da Roça</a>
+      <nav>
+        <a href="{{ url_for('inicio') }}" class="{{ 'ativo' if request.endpoint == 'inicio' }}">Painel</a>
+        <a href="{{ url_for('municipios') }}" class="{{ 'ativo' if request.endpoint in ('municipios', 'municipio') }}">Municípios</a>
+        <a href="{{ url_for('sobre') }}" class="{{ 'ativo' if request.endpoint == 'sobre' }}">Sobre</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    {% block conteudo %}{% endblock %}
+  </main>
+  <footer>
+    Merenda da Roça · Equipe Raiz Digital · Turma 2TSCPW · Global Solution 2026.2 (CitizenTech)<br>
+    Dados: FNDE (PNAE, compras da agricultura familiar) e IBGE (Censo 2022) · versão {{ versao }}
+  </footer>
+</body>
+</html>

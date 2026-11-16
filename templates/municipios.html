@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block titulo %}Municípios · Merenda da Roça{% endblock %}
+{% block conteudo %}
+<h2 style="margin-top: 0">Quanto cada município compra da agricultura familiar</h2>
+<p>Busque o seu município e veja quanto falta, em reais, para cumprir a meta de 45%.</p>
+
+<form class="filtros" method="get">
+  <input type="search" name="q" value="{{ q }}" placeholder="Nome do município">
+  <select name="uf">
+    <option value="">Todas as UFs</option>
+    {% for u in ufs %}<option value="{{ u }}" {{ 'selected' if u == uf }}>{{ u }}</option>{% endfor %}
+  </select>
+  <select name="faixa">
+    <option value="">Todas as faixas</option>
+    {% for f in faixas %}<option value="{{ f }}" {{ 'selected' if f == faixa }}>{{ f }}</option>{% endfor %}
+  </select>
+  <button type="submit">Filtrar</button>
+</form>
+
+<p style="color: var(--cinza)">{{ total }} município(s) encontrado(s){% if total > 200 %}, mostrando os 200 com menor percentual{% endif %}.</p>
+
+<div class="painel">
+  <table>
+    <thead>
+      <tr><th>Município</th><th>UF</th><th class="num">% da AF</th><th class="esconde-mobile">Meta 45%</th><th class="num">Falta comprar</th></tr>
+    </thead>
+    <tbody>
+      {% for m in municipios %}
+      {% set nivel = 'ok' if m.perc_af >= meta_nova else ('medio' if m.perc_af >= meta_antiga else 'baixo') %}
+      <tr>
+        <td><a href="{{ url_for('municipio', uf=m.uf, nome=m.municipio) }}">{{ m.municipio }}</a></td>
+        <td>{{ m.uf }}</td>
+        <td class="num">{{ m.perc_af | pct }}</td>
+        <td class="esconde-mobile">
+          <div class="medidor"><div class="preench {{ nivel }}" style="width: {{ [m.perc_af, 1] | min * 100 }}%"></div><div class="marca45"></div></div>
+        </td>
+        <td class="num">{% set f = falta(m) %}{% if f > 0 %}{{ f | reais }}{% else %}<span class="etiqueta ok">Cumpre</span>{% endif %}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5">Nenhum município encontrado com esses filtros.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
