@@ -1,0 +1,91 @@
+# Merenda da Roça - CI/CD com Azure Pipelines
+# Código (Azure Repos) -> Pipeline -> Build + Testes -> Deploy no Azure Web App
+#
+# Roda no agente self-hosted da equipe (pool Default), pois a organização
+# não possui parallel jobs hospedados pela Microsoft.
+
+trigger:
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  azureSubscription: 'azure-merenda-da-roca'   # nome da service connection
+  webAppName: 'merenda-da-roca-raizdigital'     # nome do Web App na Azure
+
+stages:
+  - stage: Build
+    displayName: 'CI - Build e testes'
+    jobs:
+      - job: BuildJob
+        displayName: 'Instalar, testar e empacotar'
+        pool:
+          name: Default
+        steps:
+          - checkout: self
+            clean: true
+
+          - script: |
+              python --version
+              python -m venv "$(Agent.TempDirectory)\venv"
+              "$(Agent.TempDirectory)\venv\Scripts\python" -m pip install -q -r requirements.txt pytest
+            displayName: 'Instalar dependências'
+
+          - script: '"$(Agent.TempDirectory)\venv\Scripts\python" -m pytest -v -p no:cacheprovider --junitxml="$(Agent.TempDirectory)\test-results.xml"'
+            displayName: 'Rodar testes automatizados (pytest)'
+
+          - task: PublishTestResults@2
+            displayName: 'Publicar resultado dos testes'
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: '$(Agent.TempDirectory)/test-results.xml'
+              testRunTitle: 'Testes Merenda da Roça'
+
+          - task: ArchiveFiles@2
+            displayName: 'Empacotar aplicação (.zip)'
+            inputs:
+              rootFolderOrFile: '$(Build.SourcesDirectory)'
+              includeRootFolder: false
+              archiveType: zip
+              archiveFile: '$(Build.ArtifactStagingDirectory)/merenda-da-roca-$(Build.BuildId).zip'
+              replaceExistingArchive: true
+              # o Web App instala as dependências sozinho (SCM_DO_BUILD_DURING_DEPLOYMENT)
+
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publicar artefato'
+            inputs:
+              targetPath: '$(Build.ArtifactStagingDirectory)'
+              artifact: 'app'
+
+  - stage: Deploy
+    displayName: 'CD - Deploy no Azure Web App'
+    dependsOn: Build
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    jobs:
+      - job: DeployJob
+        displayName: 'Publicar no Web App'
+        pool:
+          name: Default
+        steps:
+          - checkout: none
+
+          - task: DownloadPipelineArtifact@2
+            inputs:
+              artifact: 'app'
+              path: '$(Pipeline.Workspace)/app'
+
+          - task: AzureWebApp@1
+            displayName: 'Deploy no Azure Web App (Linux, Python)'
+            inputs:
+              azureSubscription: '$(azureSubscription)'
+              appType: 'webAppLinux'
+              appName: '$(webAppName)'
+              package: '$(Pipeline.Workspace)/app/*.zip'
+              runtimeStack: 'PYTHON|3.12'
+              startUpCommand: 'gunicorn --bind=0.0.0.0 --timeout 600 app:app'
+              appSettings: '-SCM_DO_BUILD_DURING_DEPLOYMENT true -APP_VERSION 1.0.$(Build.BuildId)'
