@@ -125,7 +125,7 @@ self-hosted** da equipe (pool `Default`, agente `MerendaPC`).
 - **Nova paleta de cores (PR !4):** como alteração visual de toda a aplicação, a equipe trocou a paleta
   original "Terra e milho" (marrom, verde e amarelo) pela paleta **"Caatinga"** (azul-petróleo, verde-água e
   laranja de urucum) em `static/style.css` e `templates/index.html`. O merge na `main` disparou o pipeline
-  (`#20261116.6`), que publicou a versão 1.0.6 com as novas cores.
+  (`#20261117.1`), que publicou a versão 1.0.6 com as novas cores.
 - A versão publicada aparece no rodapé do site e em `/health` (`1.0.<BuildId>`). Isso prova que a alteração
   chegou ao ambiente pelo pipeline.
 
