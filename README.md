@@ -63,7 +63,7 @@ Nenhum template ou página padrão de terceiros foi mantido.
 ```
 app.py                  aplicação Flask (rotas e regra da meta de 45%)
 templates/              páginas HTML (painel, municípios, município, sobre, 404)
-static/style.css        identidade visual da Merenda da Roça
+static/style.css        identidade visual da Merenda da Roça (paleta "Caatinga")
 data/                   resumo.json e municipios.json gerados da base FNDE/IBGE
 scripts/gerar_dados.py  gera a pasta data/ a partir do CSV da equipe
 tests/test_app.py       testes automatizados (pytest)
@@ -96,7 +96,7 @@ O **Azure Repos é o repositório principal** da atividade (`MerendaDaRoca`).
 - `feature/update-solution`: branch usada para as alterações na aplicação.
 
 As alterações foram feitas na branch `feature/update-solution` e integradas à `main` por Pull Request
-(PR !1, PR !2 e PR !3). O histórico de commits registra cada etapa: base de dados, aplicação, testes,
+(PR !1, PR !2, PR !3 e PR !4). O histórico de commits registra cada etapa: base de dados, aplicação, testes,
 pipeline, documentação e atualizações.
 
 ### Azure Pipelines
@@ -122,6 +122,10 @@ self-hosted** da equipe (pool `Default`, agente `MerendaPC`).
   self-hosted guardava o `.zip` da execução anterior, e a tarefa encontrou dois pacotes. A correção (limpar o
   workspace a cada job e usar o pacote exato do build atual) entrou pelo **PR !2**. O pipeline rodou de novo
   sozinho (`#20261116.3`) e publicou a versão 1.0.3 com o destaque do Piauí.
+- **Nova paleta de cores (PR !4):** como alteração visual de toda a aplicação, a equipe trocou a paleta
+  original "Terra e milho" (marrom, verde e amarelo) pela paleta **"Caatinga"** (azul-petróleo, verde-água e
+  laranja de urucum) em `static/style.css` e `templates/index.html`. O merge na `main` disparou o pipeline
+  (`#20261116.6`), que publicou a versão 1.0.6 com as novas cores.
 - A versão publicada aparece no rodapé do site e em `/health` (`1.0.<BuildId>`). Isso prova que a alteração
   chegou ao ambiente pelo pipeline.
 

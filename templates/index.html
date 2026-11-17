@@ -39,7 +39,7 @@
 <h2>Como as prefeituras se distribuem em relação à meta ({{ r.ano_referencia }})</h2>
 <div class="painel">
   {% set total = r.faixas.values() | sum %}
-  {% set cores = {"45% ou mais": "#3f7d3a", "30% a 45%": "#e8b03c", "Abaixo de 30%": "#b8432e", "0% (nao comprou)": "#5c2f19"} %}
+  {% set cores = {"45% ou mais": "#2a9d8f", "30% a 45%": "#f4a261", "Abaixo de 30%": "#d1495b", "0% (nao comprou)": "#12343b"} %}
   {% set ordem = ["45% ou mais", "30% a 45%", "Abaixo de 30%", "0% (nao comprou)"] %}
   <div class="faixas">
     {% for f in ordem if f in r.faixas %}
